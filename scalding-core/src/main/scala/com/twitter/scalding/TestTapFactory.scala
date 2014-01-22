@@ -23,11 +23,11 @@ import cascading.tap.Tap
 import cascading.tap.hadoop.Hfs
 import cascading.scheme.NullScheme
 
-import java.io.{File, Serializable, InputStream, OutputStream}
+import java.io.{Serializable, InputStream, OutputStream}
 
 import org.apache.hadoop.mapred.JobConf
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.RecordReader;
+import org.apache.hadoop.mapred.OutputCollector
+import org.apache.hadoop.mapred.RecordReader
 
 import scala.collection.JavaConverters._
 
@@ -61,6 +61,7 @@ class TestTapFactory(src: Source, sinkMode: SinkMode) extends Serializable {
         * to access this.  You must explicitly name each of your test sources in your
         * JobTest.
         */
+        require(buffers(src).isDefined, "HELLO")
         val buffer =
           if (readOrWrite == Write) {
             val buf = buffers(src).get
@@ -78,6 +79,7 @@ class TestTapFactory(src: Source, sinkMode: SinkMode) extends Serializable {
       case hdfsTest @ HadoopTest(conf, buffers) =>
         readOrWrite match {
           case Read => {
+            require(buffers(src).isDefined, "HELLO")
             val bufOpt = buffers(src)
             if(bufOpt.isDefined) {
               val buffer = bufOpt.get
