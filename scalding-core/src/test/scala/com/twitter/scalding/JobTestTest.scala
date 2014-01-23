@@ -10,26 +10,21 @@ class SimpleTestJob(args: Args) extends Job(args) {
 class JobTestTest extends Specification {
   // TODO: write test using JobTest that tests sources error helpfully.
 
-  "A JobTest should" {
+  "A JobTest" should {
     "error helpfully when a source in the job doesn't have a corresponding .source call" in {
-      val testInput = List(("a", 1), ("b", 2))
-      
-      def runJobTest = JobTest(new SimpleTestJob(_))
+      val testInput: List[(String, Int)] = List(("a", 1), ("b", 2))
+
+      // A method that runs a JobTest where the sources don't match.
+      def runJobTest() = JobTest(new SimpleTestJob(_))
         .arg("input", "input")
         .arg("output", "output")
         .source(Tsv("different-input"), testInput)
-        .sink[(String, Int)](Tsv("output")){ outBuf => { /** No-op **/ }}
+        .sink[(String, Int)](Tsv("output")){ outBuf => { assert(outBuf == testInput) }}
         .run
 
-      // runJobTest must throwA[IllegalArgumentException]
-
-      try {
-        runJobTest
-        fail("Should have thrown an exception")
-      } catch {
-        case iae: IllegalArgumentException => iae.getMessage must contain("HELLO")
-        case e: Exception =>
-          fail("Should have thrown an IllegalArgumentException, instead threw %s".format(e))
+      runJobTest() must throwA[IllegalArgumentException].like {
+        case iae: IllegalArgumentException => iae.getMessage mustVerify(_.contains("HELLO"))
+        case _ => fail("Should have thrown an IllegalArgumentException")
       }
     }
   }

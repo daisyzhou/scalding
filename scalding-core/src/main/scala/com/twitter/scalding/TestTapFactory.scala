@@ -61,7 +61,11 @@ class TestTapFactory(src: Source, sinkMode: SinkMode) extends Serializable {
         * to access this.  You must explicitly name each of your test sources in your
         * JobTest.
         */
-        require(buffers(src).isDefined, "HELLO")
+        require(
+            buffers(src).isDefined,
+            "Source %s does not appear in your test sources. ".format(src) +
+              "Each source in your job must have a corresponding source in the test sources that is exactly equal."
+        )
         val buffer =
           if (readOrWrite == Write) {
             val buf = buffers(src).get

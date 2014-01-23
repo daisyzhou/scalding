@@ -5,6 +5,7 @@ import scala.collection.mutable.Buffer
 import org.specs._
 import cascading.tuple.{Fields, Tuple}
 import java.lang.IllegalArgumentException
+import cascading.tap.Tap
 
 class TestTapFactoryTest extends Specification {
   noDetailedDiffs()
@@ -28,20 +29,16 @@ class TestTapFactoryTest extends Specification {
     val testMode = Test(buffers)
     val testTapFactory = TestTapFactory(testSource, testFields)
 
-    "error helpfully when a source is not in the map for test buffers" in {
-//      {
-//        testTapFactory.createTap(Read)(testMode)
-//      } must throwA[RuntimeException] like {
-//        case e: RuntimeException => e.getMessage.contains("HELLOOO")
-//      }
+    def createIllegalTap(): Tap[Any, Any, Any] =
+      testTapFactory.createTap(Read)(testMode).asInstanceOf[Tap[Any, Any, Any]]
+
+    "error helpfully when a source is not in the map for test buffers" >> {
       // TODO: Figure out how to inspect exception messages in specs2.
-      try {
-        testTapFactory.createTap(Read)(testMode)
-        fail("Should have thrown an exception")
-      } catch {
-        case iae: IllegalArgumentException => assert(iae.getMessage.contains("HELLO"))
-        case e: Exception =>
-          fail("Should throw an IllegalArgumentException, instead threw: %s".format(e))
+
+      createIllegalTap() must throwA[IllegalArgumentException].like {
+        case iae: IllegalArgumentException =>
+            iae.getMessage mustVerify(_.contains(testSource.toString))
+        case _ => fail("Should have thrown an IllegalArgumentException")
       }
     }
 
