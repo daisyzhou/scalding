@@ -24,7 +24,6 @@ class JobTestTest extends Specification {
 
       runJobTest() must throwA[IllegalArgumentException].like {
         case iae: IllegalArgumentException => iae.getMessage mustVerify(_.contains("HELLO"))
-        case _ => fail("Should have thrown an IllegalArgumentException")
       }
     }
   }

@@ -83,7 +83,6 @@ class TestTapFactory(src: Source, sinkMode: SinkMode) extends Serializable {
       case hdfsTest @ HadoopTest(conf, buffers) =>
         readOrWrite match {
           case Read => {
-            require(buffers(src).isDefined, "HELLO")
             val bufOpt = buffers(src)
             if(bufOpt.isDefined) {
               val buffer = bufOpt.get

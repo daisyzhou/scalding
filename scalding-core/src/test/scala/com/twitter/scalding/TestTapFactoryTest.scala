@@ -33,12 +33,9 @@ class TestTapFactoryTest extends Specification {
       testTapFactory.createTap(Read)(testMode).asInstanceOf[Tap[Any, Any, Any]]
 
     "error helpfully when a source is not in the map for test buffers" >> {
-      // TODO: Figure out how to inspect exception messages in specs2.
-
       createIllegalTap() must throwA[IllegalArgumentException].like {
         case iae: IllegalArgumentException =>
             iae.getMessage mustVerify(_.contains(testSource.toString))
-        case _ => fail("Should have thrown an IllegalArgumentException")
       }
     }
 
